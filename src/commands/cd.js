@@ -18,5 +18,6 @@ module.exports = async function cd ({ ipfs, wd }, path) {
   }
 
   debug(path)
+  console.log(path)
   return { wd: path }
 }

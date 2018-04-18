@@ -2,6 +2,7 @@ const Inquirer = require('inquirer')
 const InquirerCommandPrompt = require('inquirer-command-prompt')
 const IpfsApi = require('ipfs-api')
 const debug = require('debug')('ipld-explorer-cli')
+const isIpfs = require('is-ipfs')
 const Commands = require('./commands')
 
 Inquirer.registerPrompt('command', InquirerCommandPrompt)
@@ -29,9 +30,17 @@ module.exports = async function () {
       autoCompletion: () => ctx.autoComplete
     }])
 
-    const [ cmd, ...argv ] = input.split(' ').filter(Boolean)
+    let [ cmd, ...argv ] = input.split(' ').filter(Boolean)
 
     debug(cmd, argv)
+
+    if (isIpfs.cid(cmd)) {
+      argv = [`/ipfs/${cmd}`]
+      cmd = 'cd'
+    } else if (isIpfs.path(cmd)) {
+      argv = [cmd]
+      cmd = 'cd'
+    }
 
     if (!Commands[cmd]) return console.error(`${cmd}: command not found`)
 

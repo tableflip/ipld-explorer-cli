@@ -7,7 +7,7 @@
     "ipld-explorer": "src/bin.js"
   },
   "scripts": {
-    "start": "node src/index",
+    "start": "node src/bin",
     "test": "standard"
   },
   "keywords": [
@@ -34,7 +34,8 @@
     "filesize": "^3.6.1",
     "inquirer": "^5.2.0",
     "inquirer-command-prompt": "0.0.7",
-    "ipfs-api": "^20.0.1"
+    "ipfs-api": "^20.0.1",
+    "is-ipfs": "^0.3.2"
   },
   "devDependencies": {
     "standard": "^11.0.1"
