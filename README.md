@@ -11,11 +11,18 @@
 Ensure you have at least:
 
 * node@7
+* go-ipfs@0.4
 
 Install the explorer:
 
 ```sh
 npm install --global ipld-explorer-cli
+```
+
+Start your Go IPFS daemon:
+
+```sh
+ipfs daemon
 ```
 
 ## Usage
