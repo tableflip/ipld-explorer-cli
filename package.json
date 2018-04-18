@@ -1,0 +1,42 @@
+{
+  "name": "ipld-explorer-cli",
+  "version": "0.0.0",
+  "description": "Explore the IPLD directed acyclic graph with your keyboard",
+  "main": "src/index.js",
+  "bin": {
+    "ipld-explorer": "src/bin.js"
+  },
+  "scripts": {
+    "start": "node src/index",
+    "test": "standard"
+  },
+  "keywords": [
+    "IPLD",
+    "explore",
+    "DAG",
+    "merkle",
+    "forest",
+    "tree",
+    "graph",
+    "acyclic",
+    "directed",
+    "node",
+    "link",
+    "hash",
+    "cli",
+    "repl"
+  ],
+  "author": "Alan Shaw",
+  "license": "MIT",
+  "dependencies": {
+    "cli-table": "^0.3.1",
+    "debug": "^3.1.0",
+    "filesize": "^3.6.1",
+    "inquirer": "^5.2.0",
+    "inquirer-command-prompt": "0.0.7",
+    "ipfs-api": "^20.0.1"
+  },
+  "devDependencies": {
+    "standard": "^11.0.1"
+  }
+}
