@@ -3,7 +3,7 @@ const debug = require('debug')('ipld-explorer-cli:commands:resolve')
 const isIpfs = require('is-ipfs')
 const format = require('../format-dag')
 
-module.exports = async function resolve ({ ipfs, wd }, path) {
+module.exports = async function resolve ({ ipfs, wd, spinner }, path) {
   path = path || wd
 
   if (isIpfs.cid(path)) {
@@ -16,6 +16,7 @@ module.exports = async function resolve ({ ipfs, wd }, path) {
     path = Path.resolve(path)
   }
 
+  spinner.text = `Resolving ${path}`
   const obj = await ipfs.dag.get(path)
 
   debug(obj)
