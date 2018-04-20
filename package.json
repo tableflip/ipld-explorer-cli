@@ -29,13 +29,16 @@
   "author": "Alan Shaw",
   "license": "MIT",
   "dependencies": {
+    "chalk": "^2.4.0",
     "cli-table": "^0.3.1",
     "debug": "^3.1.0",
     "filesize": "^3.6.1",
     "inquirer": "^5.2.0",
     "inquirer-command-prompt": "0.0.7",
     "ipfs-api": "^20.0.1",
-    "is-ipfs": "^0.3.2"
+    "ipld-dag-pb": "^0.14.3",
+    "is-ipfs": "^0.3.2",
+    "ora": "^2.0.0"
   },
   "devDependencies": {
     "standard": "^11.0.1"

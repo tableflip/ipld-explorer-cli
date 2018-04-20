@@ -1,10 +1,10 @@
 const IpfsApi = require('ipfs-api')
-const debug = require('debug')('ipld-explorer-cli:config')
+const debug = require('debug')('ipld-explorer-cli:commands:config')
 
 module.exports = function config (ctx, subCmd, key, value) {
-  if (subCmd !== 'set') return console.error(`${subCmd}: subcommand not found`)
-  if (key !== 'apiUrl') return console.error(`${key}: invalid config key`)
+  if (subCmd !== 'set') throw new Error(`${subCmd}: subcommand not found`)
+  if (key !== 'apiUrl') throw new Error(`${key}: invalid config key`)
   debug(subCmd, key, value)
   const ipfs = new IpfsApi(value)
-  return { ipfs }
+  return { ctx: { ipfs } }
 }

@@ -1,3 +1,3 @@
 module.exports = function pwd ({ wd }) {
-  console.log(wd)
+  return { out: wd }
 }

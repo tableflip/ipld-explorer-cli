@@ -1,7 +1,9 @@
 const Path = require('path')
-const debug = require('debug')('ipld-explorer-cli:ls')
+const debug = require('debug')('ipld-explorer-cli:commands:ls')
 const Table = require('cli-table')
 const filesize = require('filesize').partial({ unix: true })
+const { DAGNode } = require('ipld-dag-pb')
+const isIpfs = require('is-ipfs')
 
 const tableOptions = {
   chars: {
@@ -27,26 +29,28 @@ const tableOptions = {
   }
 }
 
-module.exports = async function ls ({ ipfs, wd }, path) {
+module.exports = async function ls ({ ipfs, wd, spinner }, path) {
   path = path || wd
 
-  if (path[0] !== '/') {
-    path = Path.join(wd, path)
+  if (isIpfs.cid(path)) {
+    path = `/ipfs/${path}`
+  } else {
+    if (path[0] !== '/') {
+      path = Path.join(wd, path)
+    }
+
+    path = Path.resolve(path)
   }
 
-  let obj
-
-  try {
-    obj = await ipfs.dag.get(path)
-  } catch (err) {
-    debug(err)
-    return console.error(err.message)
-  }
+  spinner.text = `Resolving ${path}`
+  const obj = await ipfs.dag.get(path)
 
   debug(obj)
 
-  const table = new Table(tableOptions)
-  table.push(['.', filesize(obj.value.size), obj.value.toJSON().multihash])
-  obj.value.links.forEach(l => table.push([l.name, filesize(l.size), l.toJSON().multihash]))
-  console.log(table.toString())
+  if (DAGNode.isDAGNode(obj.value)) {
+    const table = new Table(tableOptions)
+    table.push(['.', filesize(obj.value.size), obj.value.toJSON().multihash])
+    obj.value.links.forEach(l => table.push([l.name, filesize(l.size), l.toJSON().multihash]))
+    return { out: table.toString() }
+  }
 }

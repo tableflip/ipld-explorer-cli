@@ -1,1 +1,4 @@
-module.exports = () => process.exit()
+module.exports = function exit ({ spinner }) {
+  spinner.stop()
+  process.exit()
+}

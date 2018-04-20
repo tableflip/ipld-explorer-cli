@@ -3,24 +3,18 @@ const InquirerCommandPrompt = require('inquirer-command-prompt')
 const IpfsApi = require('ipfs-api')
 const debug = require('debug')('ipld-explorer-cli')
 const isIpfs = require('is-ipfs')
+const ora = require('ora')
 const Commands = require('./commands')
 
 Inquirer.registerPrompt('command', InquirerCommandPrompt)
 
 module.exports = async function () {
-  const initialCtx = await getInitialCtx()
-
   console.log('\nWelcome to the IPLD explorer REPL!')
   console.log('Type "help" then <Enter> for a list of commands\n')
 
-  async function getInitialCtx () {
-    const ipfs = IpfsApi()
-    const { hash } = await ipfs.files.stat('/')
-    const wd = `/ipfs/${hash}`
-    return { ipfs, wd }
-  }
+  let ctx = await getInitialCtx()
 
-  loop(async ctx => {
+  loop(async function rep () {
     ctx.autoComplete = await getAutoCompleteList(ctx)
 
     const { input } = await Inquirer.prompt([{
@@ -44,8 +38,35 @@ module.exports = async function () {
 
     if (!Commands[cmd]) return console.error(`${cmd}: command not found`)
 
-    return Commands[cmd](ctx, ...argv)
-  }, initialCtx)
+    ctx.spinner = ora().start()
+    let res
+
+    try {
+      res = await Commands[cmd](ctx, ...argv)
+    } catch (err) {
+      debug(err)
+      return ctx.spinner.fail(err.message)
+    }
+
+    ctx.spinner.stop()
+
+    if (res && res.ctx) Object.assign(ctx, res.ctx)
+    if (res && res.out) console.log(res.out)
+  })
+
+  async function getInitialCtx () {
+    const ipfs = IpfsApi()
+    let hash
+
+    // TODO: remove once js-ipfs supports MFS
+    if (ipfs.files.stat) {
+      hash = (await ipfs.files.stat('/')).hash
+    } else {
+      hash = 'QmfGBRT6BbWJd7yUc2uYdaUZJBbnEFvTqehPFoSMQ6wgdr'
+    }
+
+    return { ipfs, wd: `/ipfs/${hash}` }
+  }
 
   async function getAutoCompleteList ({ ipfs, wd }) {
     const cmdNames = Object.keys(Commands)
@@ -58,15 +79,7 @@ module.exports = async function () {
     return cmdNames.concat(autoCompleteLinks)
   }
 
-  async function loop (func, ctx) {
-    while (true) {
-      try {
-        Object.assign(ctx, await func(ctx))
-      } catch (err) {
-        debug(err)
-        console.error(err.message)
-        process.exit(1)
-      }
-    }
+  async function loop (func) {
+    while (true) { await func() }
   }
 }

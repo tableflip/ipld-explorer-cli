@@ -1,5 +1,5 @@
 module.exports = function help ({ wd }) {
-  console.log(`
+  const out = `
 Use the following commands to explore the IPFS DAG:
 
 cd         <path>         change current working DAG to path
@@ -13,5 +13,6 @@ pwd                       print the working DAG path
 resolve    [path]         walk down a path and return the object found there
                           (default path is working DAG path)
 version                   print the version number of this tool
-`)
+`
+  return { out }
 }

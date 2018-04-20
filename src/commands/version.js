@@ -1,1 +1,5 @@
-module.exports = () => console.log(`v${require('../../package.json').version}`)
+const pkg = require('../../package.json')
+
+module.exports = function version () {
+  return { out: `v${pkg.version}` }
+}
