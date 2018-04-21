@@ -4,6 +4,7 @@ const IpfsApi = require('ipfs-api')
 const debug = require('debug')('ipld-explorer-cli')
 const isIpfs = require('is-ipfs')
 const ora = require('ora')
+const { DAGNode } = require('ipld-dag-pb')
 const Commands = require('./commands')
 
 Inquirer.registerPrompt('command', InquirerCommandPrompt)
@@ -70,11 +71,11 @@ module.exports = async function () {
 
   async function getAutoCompleteList ({ ipfs, wd }) {
     const cmdNames = Object.keys(Commands)
-    const workingDag = (await ipfs.dag.get(wd)).value
+    const node = (await ipfs.dag.get(wd)).value
 
-    const autoCompleteLinks = workingDag.links.reduce((ac, l) => {
-      return ac.concat(cmdNames.map(n => `${n} ${l.name}`))
-    }, [])
+    const autoCompleteLinks = DAGNode.isDAGNode(node)
+      ? node.links.reduce((ac, l) => ac.concat(cmdNames.map(n => `${n} ${l.name}`)), [])
+      : [] // TODO: support CBOR node
 
     return cmdNames.concat(autoCompleteLinks)
   }
