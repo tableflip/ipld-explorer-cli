@@ -1,15 +1,16 @@
+const { inspect } = require('util')
 const debug = require('debug')('ipld-explorer-cli:format-dag')
 const Table = require('cli-table')
 const filesize = require('filesize').partial({ unix: true })
 const { DAGNode } = require('ipld-dag-pb')
 const Chalk = require('chalk')
+const CID = require('cids')
 
 module.exports = node => {
   debug(node)
   if (DAGNode.isDAGNode(node)) return formatDagPb(node)
   if (Buffer.isBuffer(node)) return formatBuffer(node)
-  if (typeof node === 'object') return formatCbor(node)
-  throw new Error('Failed to format DAG node')
+  return formatCbor(node)
 }
 
 const tableOptions = {
@@ -58,7 +59,7 @@ ${Chalk.gray('Size:')} ${filesize(dagNode.size)}
 
 ${Chalk.gray('Data:')}
 
-${dagNode.data.inspect()}${links}
+${inspect(dagNode.data)}${links}
 `
 }
 
@@ -66,14 +67,48 @@ function formatBuffer (buf) {
   return `
 ${Chalk.green('Buffer DAG Node')}
 
-${buf}
+${inspect(buf)}
 `
 }
 
 function formatCbor (obj) {
+  let links = ''
+
+  if (typeof obj === 'object' && Object.keys(obj).length) {
+    const linkNodes = Object.keys(obj).filter(k => !!obj[k]['/'])
+
+    if (linkNodes.length) {
+      const table = new Table(tableOptions)
+
+      Object.keys(obj).forEach(k => {
+        if (obj[k]['/']) {
+          let cid
+
+          try {
+            cid = new CID(obj[k]['/'])
+          } catch (err) {
+            debug(err)
+          }
+
+          table.push([k, cid ? cid.toBaseEncodedString() : inspect(obj[k]['/'])])
+        } else {
+          table.push([k, Chalk.gray('(data)')])
+        }
+      })
+
+      links = `
+
+${Chalk.gray('Links (at this level):')}
+
+${table.toString()}`
+    }
+  }
+
   return `
 ${Chalk.green('CBOR DAG Node')}
 
-${JSON.stringify(obj, null, 2)}
+${Chalk.gray('Data:')}
+
+${inspect(obj, { colors: true })}${links}
 `
 }

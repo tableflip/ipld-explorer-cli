@@ -30,6 +30,7 @@
   "license": "MIT",
   "dependencies": {
     "chalk": "^2.4.0",
+    "cids": "^0.5.3",
     "cli-table": "^0.3.1",
     "debug": "^3.1.0",
     "filesize": "^3.6.1",
