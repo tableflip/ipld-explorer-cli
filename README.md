@@ -36,6 +36,40 @@ Type "help" then <Enter> for a list of commands
 ? >
 ```
 
+## Commands
+
+### `cd [path]` (alias `get`)
+
+Change DAG. Changes the current working DAG node to the specified path. If the path is starts with `/ipfs` or is a CID then change to that path otherwise path is taken to be relative to the current working DAG path.
+
+### `pwd`
+
+Print working DAG. Prints the path of the current working DAG.
+
+### `resolve [path]`
+
+Walk down the provided path and print the object found there. `path` defaults to CWD (current working DAG) if not specified.
+
+### `ls [path]`
+
+List the entries at a path. `path` defaults to CWD (current working DAG) if not specified.
+
+### `config set <key> <value>`
+
+Set a config value.
+
+### `help`
+
+Print the help information.
+
+### `version`
+
+Prints the version of the ipld-explorer.
+
+### `exit`
+
+Quit the explorer.
+
 ## Contribute
 
 Feel free to dive in! [Open an issue](https://github.com/tableflip/ipld-explorer-cli/issues/new) or submit PRs.

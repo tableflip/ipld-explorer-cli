@@ -1,4 +1,5 @@
 exports.cd = require('./cd')
+exports.get = require('./cd')
 exports.config = require('./config')
 exports.exit = require('./exit')
 exports.help = require('./help')

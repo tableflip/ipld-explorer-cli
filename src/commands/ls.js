@@ -69,7 +69,7 @@ module.exports = async function ls ({ ipfs, wd, spinner }, path) {
 
         table.push([k, cid ? cid.toBaseEncodedString() : inspect(obj.value[k]['/'])])
       } else {
-        table.push([k, Chalk.gray('(data)')])
+        table.push([k, Chalk.gray('(local)')])
       }
     })
     return { out: table.toString() }

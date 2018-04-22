@@ -92,7 +92,7 @@ function formatCbor (obj) {
 
           table.push([k, cid ? cid.toBaseEncodedString() : inspect(obj[k]['/'])])
         } else {
-          table.push([k, Chalk.gray('(data)')])
+          table.push([k, Chalk.gray('(local)')])
         }
       })
 
