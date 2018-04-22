@@ -42,7 +42,7 @@ function formatDagPb (dagNode) {
 
   if (dagNode.links.length) {
     const table = new Table(tableOptions)
-    dagNode.links.forEach(l => table.push([l.name, filesize(l.size), l.toJSON().multihash]))
+    dagNode.links.forEach(l => table.push([l.name || Chalk.gray('(no name)'), filesize(l.size), l.toJSON().multihash]))
     links = `
 
 ${Chalk.gray('Links:')}

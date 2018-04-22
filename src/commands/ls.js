@@ -53,7 +53,7 @@ module.exports = async function ls ({ ipfs, wd, spinner }, path) {
   if (DAGNode.isDAGNode(obj.value)) {
     const table = new Table(tableOptions)
     table.push(['.', filesize(obj.value.size), obj.value.toJSON().multihash])
-    obj.value.links.forEach(l => table.push([l.name, filesize(l.size), l.toJSON().multihash]))
+    obj.value.links.forEach(l => table.push([l.name || Chalk.gray('(no name)'), filesize(l.size), l.toJSON().multihash]))
     return { out: table.toString() }
   } else if (typeof obj.value === 'object') {
     const table = new Table(tableOptions)
