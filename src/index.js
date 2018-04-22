@@ -22,7 +22,7 @@ module.exports = async function () {
       type: 'command',
       name: 'input',
       message: '>',
-      autoCompletion: () => ctx.autoComplete
+      autoCompletion: s => s.includes(' ') ? ctx.autoComplete : Object.keys(Commands)
     }])
 
     let [ cmd, ...argv ] = input.split(' ').filter(Boolean)
@@ -71,11 +71,19 @@ module.exports = async function () {
 
   async function getAutoCompleteList ({ ipfs, wd }) {
     const cmdNames = Object.keys(Commands)
-    const node = (await ipfs.dag.get(wd)).value
+    const { value } = await ipfs.dag.get(wd)
+    let autoCompleteLinks = []
 
-    const autoCompleteLinks = DAGNode.isDAGNode(node)
-      ? node.links.reduce((ac, l) => ac.concat(cmdNames.map(n => `${n} ${l.name}`)), [])
-      : [] // TODO: support CBOR node
+    if (DAGNode.isDAGNode(value)) {
+      autoCompleteLinks = value.links.reduce((ac, l) => {
+        if (!l.name) return ac
+        return ac.concat(cmdNames.map(n => `${n} ${l.name}`))
+      }, [])
+    } else if (typeof value === 'object') {
+      autoCompleteLinks = Object.keys(value).reduce((ac, key) => {
+        return ac.concat(cmdNames.map(n => `${n} ${key}`))
+      }, [])
+    }
 
     return cmdNames.concat(autoCompleteLinks)
   }
