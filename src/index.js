@@ -57,16 +57,8 @@ module.exports = async function () {
 
   async function getInitialCtx () {
     const ipfs = IpfsApi()
-    let hash
-
-    // TODO: remove once js-ipfs supports MFS
-    if (ipfs.files.stat) {
-      hash = (await ipfs.files.stat('/')).hash
-    } else {
-      hash = 'QmfGBRT6BbWJd7yUc2uYdaUZJBbnEFvTqehPFoSMQ6wgdr'
-    }
-
-    return { ipfs, wd: `/ipfs/${hash}` }
+    const wd = await Commands.cd.getInitialPath(ipfs)
+    return { ipfs, wd }
   }
 
   async function getAutoCompleteList ({ ipfs, wd }) {
