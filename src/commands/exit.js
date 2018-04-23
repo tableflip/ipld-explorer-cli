@@ -1,4 +1,4 @@
 module.exports = function exit ({ spinner }) {
-  spinner.stop()
+  if (spinner) spinner.stop()
   process.exit()
 }

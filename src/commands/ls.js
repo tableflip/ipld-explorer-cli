@@ -45,7 +45,7 @@ module.exports = async function ls ({ ipfs, wd, spinner }, path) {
     path = Path.resolve(path)
   }
 
-  spinner.text = `Resolving ${path}`
+  if (spinner) spinner.text = `Resolving ${path}`
   const obj = await ipfs.dag.get(path)
 
   debug(obj)
