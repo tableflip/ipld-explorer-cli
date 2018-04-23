@@ -1,6 +1,6 @@
 {
   "name": "ipld-explorer-cli",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Explore the IPLD directed acyclic graph with your keyboard",
   "main": "src/index.js",
   "bin": {
