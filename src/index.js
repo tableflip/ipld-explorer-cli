@@ -6,7 +6,7 @@ const Commands = require('./commands')
 const { evaluate, withSpin } = require('./eval')
 const print = require('./print')
 const loop = require('./loop')
-const { getAutoCompleteList } = require('./auto-complete')
+const AutoComplete = require('./auto-complete')
 
 Inquirer.registerPrompt('command', InquirerCommandPrompt)
 
@@ -22,14 +22,17 @@ async function repl (ctx) {
   console.log('\nWelcome to the IPLD explorer REPL!')
   console.log('Type "help" then <Enter> for a list of commands\n')
 
+  const autoComplete = new AutoComplete()
+
   loop(async function rep () {
-    ctx.autoComplete = await getAutoCompleteList(ctx)
+    // Update the autocomplete list based on the new context
+    await autoComplete.updateList(ctx)
 
     const { input } = await Inquirer.prompt([{
       type: 'command',
       name: 'input',
       message: '>',
-      autoCompletion: s => s.includes(' ') ? ctx.autoComplete : Object.keys(Commands)
+      autoCompletion: autoComplete.getList
     }])
 
     let [ cmd, ...args ] = input.split(' ').filter(Boolean)
