@@ -1,7 +1,7 @@
 const Chalk = require('chalk')
 const debug = require('debug')('ipld-explorer-cli:print')
 
-module.exports = async (func) => {
+module.exports = async function print (func) {
   try {
     const res = await func()
     if (res && res.out) console.log(res.out)

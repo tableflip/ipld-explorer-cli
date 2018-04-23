@@ -6,7 +6,7 @@ const { DAGNode } = require('ipld-dag-pb')
 const Chalk = require('chalk')
 const CID = require('cids')
 
-module.exports = node => {
+module.exports = function formatDag (node) {
   debug(node)
   if (DAGNode.isDAGNode(node)) return formatDagPb(node)
   if (Buffer.isBuffer(node)) return formatBuffer(node)

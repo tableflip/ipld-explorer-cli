@@ -21,7 +21,7 @@ module.exports.evaluate = (cmd, ctx, args) => {
 }
 
 module.exports.withSpin = (evaluate) => {
-  return async (cmd, ctx, args) => {
+  return async function evaluateWithSpin (cmd, ctx, args) {
     ctx.spinner = ora().start()
     try {
       return await evaluate(cmd, ctx, args)
