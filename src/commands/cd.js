@@ -2,8 +2,8 @@ const Path = require('path')
 const debug = require('debug')('ipld-explorer-cli:commands:cd')
 const isIpfs = require('is-ipfs')
 
-module.exports = async function cd ({ ipfs, wd, spinner }, path) {
-  path = path || wd
+async function cd ({ ipfs, wd, spinner }, path) {
+  path = path || await getInitialPath(ipfs)
 
   if (isIpfs.cid(path)) {
     path = `/ipfs/${path}`
@@ -21,3 +21,17 @@ module.exports = async function cd ({ ipfs, wd, spinner }, path) {
   debug(path)
   return { out: path, ctx: { wd: path } }
 }
+
+async function getInitialPath (ipfs) {
+  let hash
+  // TODO: remove once js-ipfs supports MFS
+  if (ipfs.files.stat) {
+    hash = (await ipfs.files.stat('/')).hash
+  } else {
+    hash = 'QmfGBRT6BbWJd7yUc2uYdaUZJBbnEFvTqehPFoSMQ6wgdr'
+  }
+  return `/ipfs/${hash}`
+}
+
+module.exports = cd
+module.exports.getInitialPath = getInitialPath
