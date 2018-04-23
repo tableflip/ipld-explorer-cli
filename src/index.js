@@ -44,7 +44,7 @@ async function repl (ctx) {
 
 async function getInitialCtx () {
   const ipfs = IpfsApi()
-  const wd = await Commands.cd.getInitialPath(ipfs)
+  const wd = await Commands.cd.getHomePath(ipfs)
   return { ipfs, wd }
 }
 
