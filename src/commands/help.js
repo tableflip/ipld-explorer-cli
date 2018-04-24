@@ -4,7 +4,7 @@ Use the following commands to explore the IPFS DAG:
 
 cd         <path>         change current working DAG to path
 config set <key> <value>  set a config key to a new value. Supported keys:
-                          "apiUrl" (value must be a multiaddr string)
+                          "apiAddr" (value must be a multiaddr string)
 exit                      exit the explorer REPL (also ctrl+c)
 help                      print this help message
 ls         [path]         list the entries for a path (default path is working
