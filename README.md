@@ -58,6 +58,12 @@ List the entries at a path. `path` defaults to CWD (current working DAG) if not 
 
 Set a config value.
 
+#### Configuration
+
+The following configuration keys are valid:
+
+* `apiAddr` - The [multiaddr](https://multiformats.io/multiaddr/) of the IPFS node to use (default: /dnsaddr/localhost/tcp/5001/http)
+
 ### `help`
 
 Print the help information.
