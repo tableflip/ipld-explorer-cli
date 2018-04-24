@@ -10,7 +10,7 @@
 
 Ensure you have at least:
 
-* node@7
+* node@8
 * go-ipfs@0.4
 
 Install the explorer:
