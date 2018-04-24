@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node src/bin",
-    "test": "standard"
+    "test": "standard && nyc --reporter=lcov --reporter=text ava"
   },
   "keywords": [
     "IPLD",
@@ -42,6 +42,9 @@
     "ora": "^2.0.0"
   },
   "devDependencies": {
+    "ava": "^0.25.0",
+    "nyc": "^11.7.1",
+    "sinon": "^4.5.0",
     "standard": "^11.0.1"
   }
 }
