@@ -36,43 +36,43 @@ Type "help" then <Enter> for a list of commands
 ? >
 ```
 
-## Commands
+### Commands
 
-### `cd [path]` (alias `get`)
+#### `cd [path]` (alias `get`)
 
 Change DAG. Changes the current working DAG node to the specified path. If the path is starts with `/ipfs` or is a CID then change to that path otherwise path is taken to be relative to the current working DAG path.
 
-### `pwd`
+#### `pwd`
 
 Print working DAG. Prints the path of the current working DAG.
 
-### `resolve [path]`
+#### `resolve [path]`
 
 Walk down the provided path and print the object found there. `path` defaults to CWD (current working DAG) if not specified.
 
-### `ls [path]`
+#### `ls [path]`
 
 List the entries at a path. `path` defaults to CWD (current working DAG) if not specified.
 
-### `config set <key> <value>`
+#### `config set <key> <value>`
 
 Set a config value.
 
-#### Configuration
+##### Configuration
 
 The following configuration keys are valid:
 
 * `apiAddr` - The [multiaddr](https://multiformats.io/multiaddr/) of the IPFS node to use (default: /dnsaddr/localhost/tcp/5001/http)
 
-### `help`
+#### `help`
 
 Print the help information.
 
-### `version`
+#### `version`
 
 Prints the version of the ipld-explorer.
 
-### `exit`
+#### `exit`
 
 Quit the explorer.
 
