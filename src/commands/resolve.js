@@ -1,4 +1,4 @@
-const Path = require('path')
+const Path = require('path').posix
 const debug = require('debug')('ipld-explorer-cli:commands:resolve')
 const isIpfs = require('is-ipfs')
 const format = require('../format-dag')

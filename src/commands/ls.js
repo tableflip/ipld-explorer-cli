@@ -1,4 +1,4 @@
-const Path = require('path')
+const Path = require('path').posix
 const { inspect } = require('util')
 const debug = require('debug')('ipld-explorer-cli:commands:ls')
 const Table = require('cli-table')
