@@ -1,5 +1,7 @@
 const Inquirer = require('inquirer')
 const InquirerCommandPrompt = require('inquirer-command-prompt')
+const debug = require('debug')('ipld-explorer-cli:read')
+const Chalk = require('chalk')
 const AutoComplete = require('./auto-complete')
 
 Inquirer.registerPrompt('command', InquirerCommandPrompt)
@@ -21,7 +23,12 @@ module.exports.withAutoComplete = (read) => {
     }
 
     // Update the autocomplete list based on the new context
-    await ctx.autoComplete.updateList(ctx)
+    try {
+      await ctx.autoComplete.updateList(ctx)
+    } catch (err) {
+      console.warn(`${Chalk.yellow('⚠')} failed to update auto-complete list`)
+      debug(err)
+    }
 
     return read(ctx)
   }
