@@ -5,8 +5,8 @@ test.beforeEach(t => {
   t.context.ipfs = {}
 })
 
-test('should set apiUrl and create new IPFS instance with passed multiaddr', async t => {
-  const res = config({ ipfs: t.context.ipfs }, 'set', 'apiUrl', '/ip4/127.0.0.1/tcp/5001')
+test('should set apiAddr and create new IPFS instance with passed multiaddr', async t => {
+  const res = config({ ipfs: t.context.ipfs }, 'set', 'apiAddr', '/ip4/127.0.0.1/tcp/5001')
   t.truthy(res.ctx.ipfs) // ensure changed
   t.not(res.ctx.ipfs, t.context.ipfs) // ensure different
 })
