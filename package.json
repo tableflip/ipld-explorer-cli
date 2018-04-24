@@ -46,5 +46,16 @@
     "nyc": "^11.7.1",
     "sinon": "^4.5.0",
     "standard": "^11.0.1"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tableflip/ipld-explorer-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tableflip/ipld-explorer-cli/issues"
+  },
+  "homepage": "https://github.com/tableflip/ipld-explorer-cli#readme"
 }
