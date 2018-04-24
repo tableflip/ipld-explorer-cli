@@ -1,6 +1,6 @@
 # ipld-explorer-cli
 
-[![dependencies Status](https://david-dm.org/tableflip/ipld-explorer-cli/status.svg)](https://david-dm.org/tableflip/ipld-explorer-cli) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![Build Status](https://travis-ci.org/tableflip/ipld-explorer-cli.svg?branch=master)](https://travis-ci.org/tableflip/ipld-explorer-cli) [![dependencies Status](https://david-dm.org/tableflip/ipld-explorer-cli/status.svg)](https://david-dm.org/tableflip/ipld-explorer-cli) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 > Explore the IPLD directed acyclic graph with your keyboard
 
