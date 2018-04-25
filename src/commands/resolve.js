@@ -1,7 +1,7 @@
 const Path = require('path').posix
 const debug = require('debug')('ipld-explorer-cli:commands:resolve')
 const isIpfs = require('is-ipfs')
-const format = require('../format-dag')
+const Formatters = require('../formatters')
 
 module.exports = async function resolve ({ ipfs, wd, spinner }, path) {
   path = path || wd
@@ -20,5 +20,5 @@ module.exports = async function resolve ({ ipfs, wd, spinner }, path) {
   const obj = await ipfs.dag.get(path)
 
   debug(obj)
-  return { out: format(obj.value) }
+  return { out: Formatters.dag(obj.value) }
 }
