@@ -29,22 +29,22 @@
   "author": "Alan Shaw",
   "license": "MIT",
   "dependencies": {
-    "chalk": "^2.4.0",
+    "chalk": "^2.4.1",
     "cids": "^0.5.3",
     "cli-table": "^0.3.1",
     "debug": "^3.1.0",
     "filesize": "^3.6.1",
     "inquirer": "^5.2.0",
     "inquirer-command-prompt": "0.0.7",
-    "ipfs-api": "^20.0.1",
-    "ipld-dag-pb": "^0.14.3",
+    "ipfs-api": "^20.2.0",
+    "ipld-dag-pb": "^0.14.4",
     "is-ipfs": "^0.3.2",
-    "ora": "^2.0.0"
+    "ora": "^2.1.0"
   },
   "devDependencies": {
     "ava": "^0.25.0",
     "nyc": "^11.7.1",
-    "sinon": "^4.5.0",
+    "sinon": "^5.0.1",
     "standard": "^11.0.1"
   },
   "directories": {
