@@ -3,6 +3,7 @@ module.exports = function help ({ wd }) {
 Use the following commands to explore the IPFS DAG:
 
 cd         <path>         change current working DAG to path
+config get [key]          get all your config or get a config value for a key
 config set <key> <value>  set a config key to a new value. Supported keys:
                           "apiAddr" (value must be a multiaddr string)
 exit                      exit the explorer REPL (also ctrl+c)
