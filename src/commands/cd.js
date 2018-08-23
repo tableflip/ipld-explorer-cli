@@ -15,21 +15,16 @@ async function cd ({ ipfs, wd, spinner }, path) {
     path = Path.resolve(path)
   }
 
+  debug(path)
+
   if (spinner) spinner.text = `Resolving ${path}`
   await ipfs.dag.get(path)
 
-  debug(path)
   return { out: path, ctx: { wd: path } }
 }
 
 async function getHomePath (ipfs) {
-  let hash
-  // TODO: remove once js-ipfs supports MFS
-  if (ipfs.files.stat) {
-    hash = (await ipfs.files.stat('/')).hash
-  } else {
-    hash = 'QmfGBRT6BbWJd7yUc2uYdaUZJBbnEFvTqehPFoSMQ6wgdr'
-  }
+  const hash = (await ipfs.files.stat('/')).hash
   return `/ipfs/${hash}`
 }
 

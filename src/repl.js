@@ -1,6 +1,8 @@
 const debug = require('debug')('ipld-explorer-cli:repl')
-const { read, withAutoComplete } = require('./read')
-const { evaluate, withSpin } = require('./eval')
+const { read } = require('./read')
+const { evaluate } = require('./eval')
+const { withAutoComplete } = require('./auto-complete')
+const { withSpin } = require('./spinner')
 const print = require('./print')
 const loop = require('./loop')
 

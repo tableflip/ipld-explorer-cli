@@ -1,4 +1,6 @@
 const IpfsApi = require('ipfs-api')
+const debug = require('debug')('ipld-explorer-cli')
+const Chalk = require('chalk')
 const repl = require('./repl')
 const Commands = require('./commands')
 const { evaluate, withSpin } = require('./eval')
@@ -16,8 +18,19 @@ module.exports = async function (argv, opts) {
 }
 
 async function getInitialCtx () {
-  const ipfs = IpfsApi()
-  const wd = await Commands.cd.getHomePath(ipfs)
+  const res = await Commands.config({}, 'get', 'apiAddr')
+  const ipfs = IpfsApi(res.out)
+  let wd
+
+  try {
+    wd = await Commands.cd.getHomePath(ipfs)
+  } catch (err) {
+    debug(err)
+    console.error(`${Chalk.red('✖')} ${err}`)
+    console.error(`${Chalk.yellow('⚠')} Is your IPFS daemon running?`)
+    wd = '/ipfs/QmfGBRT6BbWJd7yUc2uYdaUZJBbnEFvTqehPFoSMQ6wgdr'
+  }
+
   return { ipfs, wd }
 }
 

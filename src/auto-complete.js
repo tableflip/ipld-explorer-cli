@@ -1,14 +1,19 @@
 const { DAGNode } = require('ipld-dag-pb')
+const debug = require('debug')('ipld-explorer-cli:auto-complete')
+const Chalk = require('chalk')
+const { withSpin } = require('./spinner')
 const Commands = require('./commands')
 
-module.exports = class AutoComplete {
+class AutoComplete {
   constructor () {
     this._list = []
     this.getList = this.getList.bind(this)
   }
 
   // Update the auto-completion list based on the passed context
-  async updateList ({ ipfs, wd }) {
+  async updateList ({ ipfs, wd, spinner }) {
+    if (spinner) spinner.text = 'Updating auto-complete list'
+
     const cmdNames = Object.keys(Commands)
     const { value } = await ipfs.dag.get(wd)
     let autoCompleteLinks = []
@@ -31,5 +36,26 @@ module.exports = class AutoComplete {
   // options
   getList (s) {
     return s.includes(' ') ? this._list : Object.keys(Commands)
+  }
+}
+
+exports.AutoComplete = AutoComplete
+
+exports.withAutoComplete = (fn) => {
+  return async function fnWithAutoComplete (ctx) {
+    if (!ctx.autoComplete) {
+      ctx.autoComplete = new AutoComplete()
+      ctx.autoComplete.updateList = withSpin(ctx.autoComplete.updateList)
+    }
+
+    // Update the autocomplete list based on the new context
+    try {
+      await ctx.autoComplete.updateList(ctx)
+    } catch (err) {
+      console.warn(`${Chalk.yellow('⚠')} failed to update auto-complete list`)
+      debug(err)
+    }
+
+    return fn.apply(this, arguments)
   }
 }

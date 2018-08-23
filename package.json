@@ -36,6 +36,7 @@
     "filesize": "^3.6.1",
     "inquirer": "^5.2.0",
     "inquirer-command-prompt": "0.0.7",
+    "ipfs": "^0.31.7",
     "ipfs-api": "^20.2.0",
     "ipld-dag-pb": "^0.14.4",
     "is-ipfs": "^0.3.2",
