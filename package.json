@@ -38,9 +38,11 @@
     "inquirer-command-prompt": "0.0.8",
     "ipfs": "^0.31.7",
     "ipfs-api": "^24.0.1",
+    "ipld": "^0.17.3",
     "ipld-dag-pb": "^0.14.4",
     "is-ipfs": "^0.4.2",
-    "ora": "^3.0.0"
+    "ora": "^3.0.0",
+    "pull-stream": "^3.6.9"
   },
   "devDependencies": {
     "ava": "^0.25.0",

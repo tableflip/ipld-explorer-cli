@@ -1,4 +1,5 @@
 const IpfsApi = require('ipfs-api')
+const Ipld = require('./lib/ipld/ipld')
 const debug = require('debug')('ipld-explorer-cli')
 const Chalk = require('chalk')
 const repl = require('./repl')
@@ -21,6 +22,8 @@ module.exports = async function (argv, opts) {
 async function getInitialCtx () {
   const res = await Commands.config({}, 'get', 'apiAddr')
   const ipfs = IpfsApi(res.out)
+  const ipld = new Ipld(ipfs.block)
+
   let wd
 
   try {
@@ -32,7 +35,7 @@ async function getInitialCtx () {
     wd = '/ipfs/QmfGBRT6BbWJd7yUc2uYdaUZJBbnEFvTqehPFoSMQ6wgdr'
   }
 
-  return { ipfs, wd }
+  return { ipld, ipfs, wd }
 }
 
 function evalPrint (ctx, cmd, cmdArgs, opts) {

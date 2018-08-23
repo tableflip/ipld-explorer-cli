@@ -3,6 +3,7 @@ const Path = require('path')
 const { promisify } = require('util')
 const Os = require('os')
 const IpfsApi = require('ipfs-api')
+const Ipld = require('../lib/ipld/ipld')
 const debug = require('debug')('ipld-explorer-cli:commands:config')
 const { getHomePath } = require('./cd')
 
@@ -22,8 +23,9 @@ const SubCommands = {
 
     if (key.toLowerCase() === 'apiaddr') {
       const ipfs = (ctx.IpfsApi || IpfsApi)(value)
+      const ipld = new Ipld(ipfs.block)
       const wd = await getHomePath(ipfs)
-      return { ctx: { ipfs, wd } }
+      return { ctx: { ipld, ipfs, wd } }
     }
   },
 
