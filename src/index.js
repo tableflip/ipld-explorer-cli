@@ -3,7 +3,8 @@ const debug = require('debug')('ipld-explorer-cli')
 const Chalk = require('chalk')
 const repl = require('./repl')
 const Commands = require('./commands')
-const { evaluate, withSpin } = require('./eval')
+const { evaluate } = require('./eval')
+const { withSpin } = require('./spinner')
 const print = require('./print')
 
 module.exports = async function (argv, opts) {
@@ -26,8 +27,8 @@ async function getInitialCtx () {
     wd = await Commands.cd.getHomePath(ipfs)
   } catch (err) {
     debug(err)
-    console.error(`${Chalk.red('✖')} ${err}`)
     console.error(`${Chalk.yellow('⚠')} Is your IPFS daemon running?`)
+    console.error(`${Chalk.red('✖')} ${err}`)
     wd = '/ipfs/QmfGBRT6BbWJd7yUc2uYdaUZJBbnEFvTqehPFoSMQ6wgdr'
   }
 
