@@ -1,8 +1,9 @@
-const { DAGNode } = require('ipld-dag-pb')
 const debug = require('debug')('ipld-explorer-cli:auto-complete')
 const Chalk = require('chalk')
+const CID = require('cids')
 const { withSpin } = require('./spinner')
 const Commands = require('./commands')
+const parseIpldPath = require('./lib/ipld/parse-ipld-path')
 
 class AutoComplete {
   constructor () {
@@ -11,20 +12,27 @@ class AutoComplete {
   }
 
   // Update the auto-completion list based on the passed context
-  async updateList ({ ipfs, wd, spinner }) {
+  async updateList ({ ipld, ipfs, wd, spinner }) {
     if (spinner) spinner.text = 'Updating auto-complete list'
 
     const cmdNames = Object.keys(Commands)
-    const { value } = await ipfs.dag.get(wd)
+
+    const resolved = await ipld.resolve(ipfs, wd)
+    const { cidOrFqdn } = parseIpldPath(resolved.path)
+    const cid = new CID(cidOrFqdn)
+
     let autoCompleteLinks = []
 
-    if (DAGNode.isDAGNode(value)) {
+    if (cid.codec === 'dag-pb') {
+      const value = await ipld.get(wd)
       autoCompleteLinks = value.links.reduce((ac, l) => {
         if (!l.name) return ac
         return ac.concat(cmdNames.map(n => `${n} ${l.name}`))
       }, [])
-    } else if (typeof value === 'object') {
-      autoCompleteLinks = Object.keys(value).reduce((ac, key) => {
+    } else {
+      const tree = await ipld.tree(wd)
+
+      autoCompleteLinks = tree.reduce((ac, key) => {
         return ac.concat(cmdNames.map(n => `${n} ${key}`))
       }, [])
     }
