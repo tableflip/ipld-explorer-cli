@@ -26,17 +26,17 @@ const tableOptions = {
   }
 }
 
-module.exports = function formatLinks (cid, links) {
+module.exports = function formatPaths (cid, paths) {
   const table = new Table(tableOptions)
 
-  links.forEach(l => {
+  paths.forEach(p => {
     table.push([
-      l.name || Chalk.gray('(no name)'),
-      l.size ? filesize(l.size) : '',
-      l.cid.codec,
-      l.name !== '.' && l.cid.equals(cid)
+      p.name || Chalk.gray('(no name)'),
+      p.size ? filesize(p.size) : '',
+      p.cid.codec,
+      p.name !== '.' && p.cid.equals(cid)
         ? Chalk.gray('(local)')
-        : l.cid.toBaseEncodedString()
+        : p.cid.toBaseEncodedString()
     ])
   })
 

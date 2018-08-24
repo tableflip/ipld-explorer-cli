@@ -1,2 +1,2 @@
-exports.dag = require('./dag')
-exports.links = require('./links')
+exports.dagNode = require('./dag-node')
+exports.paths = require('./paths')

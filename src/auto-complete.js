@@ -1,9 +1,7 @@
 const debug = require('debug')('ipld-explorer-cli:auto-complete')
 const Chalk = require('chalk')
-const CID = require('cids')
 const { withSpin } = require('./spinner')
 const Commands = require('./commands')
-const parseIpldPath = require('./lib/ipld/parse-ipld-path')
 
 class AutoComplete {
   constructor () {
@@ -16,11 +14,7 @@ class AutoComplete {
     if (spinner) spinner.text = 'Updating auto-complete list'
 
     const cmdNames = Object.keys(Commands)
-
-    const resolved = await ipld.resolve(ipfs, wd)
-    const { cidOrFqdn } = parseIpldPath(resolved.path)
-    const cid = new CID(cidOrFqdn)
-
+    const { cid } = await ipld.resolve(wd)
     let autoCompleteLinks = []
 
     if (cid.codec === 'dag-pb') {

@@ -5,7 +5,7 @@ const isIpfs = require('is-ipfs')
 async function cd ({ ipld, ipfs, wd, spinner }, path) {
   path = path || await getHomePath(ipfs)
 
-  if (isIpfs.cid(path)) {
+  if (isIpfs.cid(path) || isIpfs.cid(path.split('/')[0])) {
     path = `/ipfs/${path}`
   } else {
     if (path[0] !== '/') {

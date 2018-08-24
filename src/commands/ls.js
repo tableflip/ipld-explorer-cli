@@ -2,7 +2,6 @@ const Path = require('path').posix
 const debug = require('debug')('ipld-explorer-cli:commands:ls')
 const isIpfs = require('is-ipfs')
 const CID = require('cids')
-const parseIpldPath = require('../lib/ipld/parse-ipld-path')
 const Formatters = require('../formatters')
 
 module.exports = async function ls ({ ipld, ipfs, wd, spinner }, path) {
@@ -20,10 +19,8 @@ module.exports = async function ls ({ ipld, ipfs, wd, spinner }, path) {
 
   if (spinner) spinner.text = `Resolving ${path}`
 
-  const resolved = await ipld.resolve(ipfs, path)
-  const { cidOrFqdn } = parseIpldPath(resolved.path)
-  const cid = new CID(cidOrFqdn)
-  let links
+  const { cid } = await ipld.resolve(path)
+  let paths
 
   debug(`resolved a ${cid.codec} node`)
 
@@ -31,28 +28,31 @@ module.exports = async function ls ({ ipld, ipfs, wd, spinner }, path) {
   if (cid.codec === 'dag-pb') {
     const node = await ipld.get(path)
 
-    links = node.links.map(l => ({
+    paths = node.links.map(l => ({
       cid: new CID(l.multihash),
       name: l.name,
       size: l.size
     }))
 
-    links = [{ cid, name: '.', size: node.size }].concat(links)
+    paths = [{ cid, name: '.', size: node.size }].concat(paths)
   } else {
     const tree = await ipld.tree(path)
     debug('tree', tree)
 
-    links = await Promise.all(
+    paths = await Promise.all(
       tree.map(async t => {
-        const resolved = await ipld.resolve(ipfs, `${path}/${t}`)
-        const { cidOrFqdn } = parseIpldPath(resolved.path)
-        const cid = new CID(cidOrFqdn)
-        return { cid, name: t }
+        const linkPath = `${path}/${t}`
+        try {
+          const { cid } = await ipld.resolve(linkPath)
+          return { cid, name: t }
+        } catch (err) {
+          debug('failed to resolve', linkPath, err)
+        }
       })
     )
 
-    links = [{ cid, name: '.' }].concat(links)
+    paths = [{ cid, name: '.' }].concat(paths.filter(Boolean))
   }
 
-  return { out: Formatters.links(cid, links) }
+  return { out: Formatters.paths(cid, paths) }
 }

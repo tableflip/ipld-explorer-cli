@@ -9,18 +9,24 @@ const parsePath = require('./parse-ipld-path')
 class Ipld {
   constructor (bs) {
     this._ipld = new _Ipld(bs)
+    this._bs = bs
   }
 
-  async tree (path) {
+  tree (path) {
     const { cidOrFqdn, rest } = parsePath(path)
 
     if (!isIpfs.cid(cidOrFqdn)) {
       throw new Error(`invalid cid ${cidOrFqdn}`)
     }
 
+    const cid = new CID(cidOrFqdn)
+    path = rest ? rest.slice(1) : ''
+
+    debug('tree', cid.toBaseEncodedString(), path)
+
     return new Promise((resolve, reject) => {
       pull(
-        this._ipld.treeStream(new CID(cidOrFqdn), rest),
+        this._ipld.treeStream(cid, path),
         pull.collect((err, paths) => {
           if (err) return reject(err)
           resolve(paths)
@@ -29,53 +35,99 @@ class Ipld {
     })
   }
 
-  async get (path) {
+  get (path) {
     const { cidOrFqdn, rest } = parsePath(path)
 
     if (!isIpfs.cid(cidOrFqdn)) {
       throw new Error(`invalid cid ${cidOrFqdn}`)
     }
 
+    const cid = new CID(cidOrFqdn)
+    path = rest ? rest.slice(1) : ''
+
+    debug('get', cid.toBaseEncodedString(), path)
+
     return new Promise((resolve, reject) => {
-      this._ipld.get(new CID(cidOrFqdn), rest, (err, res) => {
+      this._ipld.get(cid, path, (err, res) => {
         if (err) return reject(err)
         resolve(res.value)
       })
     })
   }
 
-  // TODO: this can all be done using the block store and remove the ipfs dependency
-  // see https://github.com/ipfs/js-ipfs/blob/1fb71f2fe9182e95db913504ed7b933d3b7ca4a4/src/core/components/resolve.js#L44-L85
-  async resolve (ipfs, path) {
-    const originalPath = path
+  // Resolve the given path to a CID + remainder path.
+  async resolve (path) {
+    debug('resolving', path)
 
-    async function _resolve (path) {
-      let resolvedPath
+    const { cidOrFqdn, rest } = parsePath(path)
 
-      try {
-        resolvedPath = await ipfs.resolve(path, { recursive: true })
-      } catch (err) {
-        if (err.message === 'found non-link at given path' || err.message === 'not a link' || err.message === 'no such link') {
-          return _resolve(path.split('/').slice(0, -1).join('/'))
-        }
-
-        debug(`failed to resolve ${path} from ${originalPath}`)
-        throw err
-      }
-
-      const resolved = {
-        path: resolvedPath,
-        remainder: originalPath.replace(path, '')
-      }
-
-      debug(`resolved ${originalPath}`)
-      debug(`to ${resolvedPath}`)
-      if (resolved.remainder) debug(`with remainder ${resolved.remainder}`)
-
-      return resolved
+    if (!isIpfs.cid(cidOrFqdn)) {
+      throw new Error(`invalid cid ${cidOrFqdn}`)
     }
 
-    return _resolve(path)
+    const originalPath = path
+    let cid = new CID(cidOrFqdn)
+    path = rest ? rest.slice(1) : ''
+
+    let remainderPath = path
+    let value
+
+    while (true) {
+      const block = await new Promise((resolve, reject) => {
+        this._bs.get(cid, (err, block) => {
+          if (err) return reject(err)
+          resolve(block)
+        })
+      })
+
+      let format = this._ipld.resolvers[cid.codec]
+
+      if (!format) {
+        throw new Error(`No resolver found for codec "${cid.codec}"`)
+      }
+
+      debug(`resolving ${path || '/'} of ${originalPath}...`)
+
+      const result = await new Promise((resolve, reject) => {
+        format.resolver.resolve(block.data, path, (err, res) => {
+          if (err) return reject(err)
+          resolve(res)
+        })
+      })
+
+      value = result.value
+      path = result.remainderPath
+
+      debug(`resolved ${cid.toBaseEncodedString()}`)
+      debug('to', value)
+      if (path) debug('with remainder path', path)
+
+      const endReached = !path || path === '/'
+
+      if (endReached) {
+        break
+      }
+
+      // Not end reached and value - must be a link!
+      if (value) {
+        cid = new CID(value['/'])
+        remainderPath = path
+      }
+    }
+
+    let result
+
+    if (value && value['/']) {
+      result = { cid: new CID(value['/']), remainderPath: '' }
+    } else {
+      result = { cid, remainderPath }
+    }
+
+    debug(`resolved ${originalPath}`)
+    debug(`to ${result.cid.toBaseEncodedString()}`)
+    if (result.remainderPath) debug(`with remainder path ${result.remainderPath}`)
+
+    return result
   }
 }
 
