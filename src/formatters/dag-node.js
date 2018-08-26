@@ -1,12 +1,12 @@
-const { inspect } = require('util')
 const filesize = require('filesize').partial({ unix: true })
 const Chalk = require('chalk')
 const formatPaths = require('./paths')
+const formatData = require('./data')
 
 module.exports = function formatDagNode (cid, info, paths) {
   const out = []
 
-  out.push(Chalk.green(`${cid.codec} DAG Node`))
+  out.push(Chalk.magenta(`${cid.codec} DAG Node`))
 
   const cidStr = cid.toBaseEncodedString()
 
@@ -21,7 +21,7 @@ module.exports = function formatDagNode (cid, info, paths) {
   }
 
   out.push(Chalk.gray('Data:'))
-  out.push(inspect(info.data))
+  out.push(formatData(cid, info.data))
 
   if (paths.length) {
     out.push(Chalk.gray('Paths:'))
