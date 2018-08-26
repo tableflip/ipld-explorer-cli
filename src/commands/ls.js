@@ -69,5 +69,5 @@ module.exports = async function ls ({ ipld, ipfs, wd, spinner }, path) {
     paths = [{ cid, name: '.' }].concat(paths.filter(Boolean))
   }
 
-  return { out: Formatters.paths(cid, paths) }
+  return { out: Formatters.paths(cid, paths, remainderPath) }
 }

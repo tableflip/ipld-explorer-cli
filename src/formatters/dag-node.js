@@ -25,7 +25,7 @@ module.exports = function formatDagNode (cid, info, paths) {
 
   if (paths.length) {
     out.push(Chalk.gray('Paths:'))
-    out.push(formatPaths(cid, paths))
+    out.push(formatPaths(cid, paths, info.remainderPath))
   }
 
   return out.join('\n\n')

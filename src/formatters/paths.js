@@ -26,17 +26,25 @@ const tableOptions = {
   }
 }
 
-module.exports = function formatPaths (cid, paths) {
+module.exports = function formatPaths (cid, paths, remainderPath) {
   const table = new Table(tableOptions)
 
   paths.forEach(p => {
+    let cidStr
+
+    if (p.name === '.') {
+      cidStr = p.cid.toBaseEncodedString() + (remainderPath ? '/' + remainderPath : '')
+    } else if (p.cid.equals(cid)) {
+      cidStr = Chalk.gray('(local)')
+    } else {
+      cidStr = p.cid.toBaseEncodedString()
+    }
+
     table.push([
       p.name || Chalk.gray('(no name)'),
       p.size ? filesize(p.size) : '',
       p.cid.codec,
-      p.name !== '.' && p.cid.equals(cid)
-        ? Chalk.gray('(local)')
-        : p.cid.toBaseEncodedString()
+      cidStr
     ])
   })
 
