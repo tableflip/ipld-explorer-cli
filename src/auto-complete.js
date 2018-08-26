@@ -14,7 +14,7 @@ class AutoComplete {
     if (spinner) spinner.text = 'Updating auto-complete list'
 
     const cmdNames = Object.keys(Commands)
-    const { cid } = await ipld.resolve(wd)
+    const { cid, remainderPath } = await ipld.resolve(wd)
     let autoCompleteLinks = []
 
     if (cid.codec === 'dag-pb') {
@@ -24,7 +24,23 @@ class AutoComplete {
         return ac.concat(cmdNames.map(n => `${n} ${l.name}`))
       }, [])
     } else {
-      const tree = await ipld.tree(wd)
+      let tree = await ipld.tree(cid)
+
+      debug('tree', tree)
+      debug('path', wd)
+      debug('remainderPath', remainderPath)
+
+      if (remainderPath) {
+        tree = tree
+          // Filter out paths below requested level
+          .filter(t => t.startsWith(remainderPath))
+          // Remove remainder path from paths
+          .map(t => t.slice(remainderPath.length))
+          .map(t => t.startsWith('/') ? t.slice(1) : t)
+          .filter(Boolean)
+
+        debug('filtered tree', tree)
+      }
 
       autoCompleteLinks = tree.reduce((ac, key) => {
         return ac.concat(cmdNames.map(n => `${n} ${key}`))

@@ -43,8 +43,23 @@ module.exports = async function resolve ({ ipld, ipfs, wd, spinner }, path) {
       size: l.size
     }))
   } else {
-    const tree = await ipld.tree(path)
+    let tree = await ipld.tree(cid)
+
     debug('tree', tree)
+    debug('path', path)
+    debug('remainderPath', remainderPath)
+
+    if (remainderPath) {
+      tree = tree
+        // Filter out paths below requested level
+        .filter(t => t.startsWith(remainderPath))
+        // Remove remainder path from paths
+        .map(t => t.slice(remainderPath.length))
+        .map(t => t.startsWith('/') ? t.slice(1) : t)
+        .filter(Boolean)
+
+      debug('filtered tree', tree)
+    }
 
     info = {
       data: node,

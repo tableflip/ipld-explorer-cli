@@ -12,21 +12,28 @@ class Ipld {
     this._bs = bs
   }
 
-  tree (path) {
-    const { cidOrFqdn, rest } = parsePath(path)
+  tree (path, options) {
+    let cid
 
-    if (!isIpfs.cid(cidOrFqdn)) {
-      throw new Error(`invalid cid ${cidOrFqdn}`)
+    if (CID.isCID(path)) {
+      cid = path
+      path = ''
+    } else {
+      const { cidOrFqdn, rest } = parsePath(path)
+
+      if (!isIpfs.cid(cidOrFqdn)) {
+        throw new Error(`invalid cid ${cidOrFqdn}`)
+      }
+
+      cid = new CID(cidOrFqdn)
+      path = rest ? rest.slice(1) : ''
     }
 
-    const cid = new CID(cidOrFqdn)
-    path = rest ? rest.slice(1) : ''
-
-    debug('tree', cid.toBaseEncodedString(), path)
+    debug('tree for', cid.toBaseEncodedString(), path)
 
     return new Promise((resolve, reject) => {
       pull(
-        this._ipld.treeStream(cid, path),
+        this._ipld.treeStream(cid, path, options),
         pull.collect((err, paths) => {
           if (err) return reject(err)
           resolve(paths)
@@ -36,16 +43,23 @@ class Ipld {
   }
 
   get (path) {
-    const { cidOrFqdn, rest } = parsePath(path)
+    let cid
 
-    if (!isIpfs.cid(cidOrFqdn)) {
-      throw new Error(`invalid cid ${cidOrFqdn}`)
+    if (CID.isCID(path)) {
+      cid = path
+      path = ''
+    } else {
+      const { cidOrFqdn, rest } = parsePath(path)
+
+      if (!isIpfs.cid(cidOrFqdn)) {
+        throw new Error(`invalid cid ${cidOrFqdn}`)
+      }
+
+      cid = new CID(cidOrFqdn)
+      path = rest ? rest.slice(1) : ''
     }
 
-    const cid = new CID(cidOrFqdn)
-    path = rest ? rest.slice(1) : ''
-
-    debug('get', cid.toBaseEncodedString(), path)
+    debug('get for', cid.toBaseEncodedString(), path)
 
     return new Promise((resolve, reject) => {
       this._ipld.get(cid, path, (err, res) => {
@@ -57,18 +71,25 @@ class Ipld {
 
   // Resolve the given path to a CID + remainder path.
   async resolve (path) {
-    debug('resolving', path)
+    let cid
 
-    const { cidOrFqdn, rest } = parsePath(path)
+    if (CID.isCID(path)) {
+      cid = path
+      path = ''
+    } else {
+      const { cidOrFqdn, rest } = parsePath(path)
 
-    if (!isIpfs.cid(cidOrFqdn)) {
-      throw new Error(`invalid cid ${cidOrFqdn}`)
+      if (!isIpfs.cid(cidOrFqdn)) {
+        throw new Error(`invalid cid ${cidOrFqdn}`)
+      }
+
+      cid = new CID(cidOrFqdn)
+      path = rest ? rest.slice(1) : ''
     }
 
-    const originalPath = path
-    let cid = new CID(cidOrFqdn)
-    path = rest ? rest.slice(1) : ''
+    debug('resolve for', cid.toBaseEncodedString(), path)
 
+    const originalPath = path
     let remainderPath = path
     let value
 

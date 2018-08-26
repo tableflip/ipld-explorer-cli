@@ -19,7 +19,7 @@ module.exports = async function ls ({ ipld, ipfs, wd, spinner }, path) {
 
   if (spinner) spinner.text = `Resolving ${path}`
 
-  const { cid } = await ipld.resolve(path)
+  const { cid, remainderPath } = await ipld.resolve(path)
   let paths
 
   debug(`resolved a ${cid.codec} node`)
@@ -36,8 +36,23 @@ module.exports = async function ls ({ ipld, ipfs, wd, spinner }, path) {
 
     paths = [{ cid, name: '.', size: node.size }].concat(paths)
   } else {
-    const tree = await ipld.tree(path)
+    let tree = await ipld.tree(cid)
+
     debug('tree', tree)
+    debug('path', path)
+    debug('remainderPath', remainderPath)
+
+    if (remainderPath) {
+      tree = tree
+        // Filter out paths below requested level
+        .filter(t => t.startsWith(remainderPath))
+        // Remove remainder path from paths
+        .map(t => t.slice(remainderPath.length))
+        .map(t => t.startsWith('/') ? t.slice(1) : t)
+        .filter(Boolean)
+
+      debug('filtered tree', tree)
+    }
 
     paths = await Promise.all(
       tree.map(async t => {
