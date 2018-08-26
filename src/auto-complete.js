@@ -17,7 +17,7 @@ class AutoComplete {
     const { cid, remainderPath } = await ipld.resolve(wd)
     let autoCompleteLinks = []
 
-    if (cid.codec === 'dag-pb') {
+    if (cid.codec === 'dag-pb' && !remainderPath) {
       const value = await ipld.get(wd)
       autoCompleteLinks = value.links.reduce((ac, l) => {
         if (!l.name) return ac

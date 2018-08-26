@@ -25,7 +25,7 @@ module.exports = async function ls ({ ipld, ipfs, wd, spinner }, path) {
   debug(`resolved a ${cid.codec} node`)
 
   // Special case for dag-pb links and meta are easily accessible within the node
-  if (cid.codec === 'dag-pb') {
+  if (cid.codec === 'dag-pb' && !remainderPath) {
     const node = await ipld.get(path)
 
     paths = node.links.map(l => ({

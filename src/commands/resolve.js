@@ -30,7 +30,7 @@ module.exports = async function resolve ({ ipld, ipfs, wd, spinner }, path) {
   debug(node)
 
   // Special case for dag-pb links and meta are easily accessible within the node
-  if (cid.codec === 'dag-pb') {
+  if (cid.codec === 'dag-pb' && !remainderPath) {
     info = {
       data: node.data,
       size: node.size,
