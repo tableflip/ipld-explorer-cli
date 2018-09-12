@@ -38,6 +38,12 @@ Type "help" then <Enter> for a list of commands
 ? >
 ```
 
+If you use JS-IPFS, make sure you set the `apiAddr` accordingly:
+
+```sh
+? > config set apiAddr /ip4/127.0.0.1/tcp/5002
+```
+
 ### Commands
 
 #### `cd [path]` (alias `get`)
