@@ -38,7 +38,7 @@
     "inquirer-command-prompt": "0.0.8",
     "ipfs": "^0.33.1",
     "ipfs-api": "^26.1.2",
-    "ipld": "^0.19.2",
+    "ipld": "^0.19.3",
     "ipld-bitcoin": "^0.1.8",
     "ipld-dag-pb": "^0.14.11",
     "ipld-ethereum": "^2.0.2",

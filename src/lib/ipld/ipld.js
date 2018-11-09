@@ -3,31 +3,51 @@ const pull = require('pull-stream')
 const isIpfs = require('is-ipfs')
 const CID = require('cids')
 const debug = require('debug')('ipld-explorer-cli:lib:ipld')
-const ipldBitcoin = require('ipld-bitcoin')
-const ipldDagCbor = require('ipld-dag-cbor')
-const ipldDagPb = require('ipld-dag-pb')
-const ipldEthAccountSnapshot = require('ipld-ethereum').ethAccountSnapshot
-const ipldEthBlock = require('ipld-ethereum').ethBlock
-const ipldEthBlockList = require('ipld-ethereum').ethBlockList
-const ipldEthStateTrie = require('ipld-ethereum').ethStateTrie
-const ipldEthStorageTrie = require('ipld-ethereum').ethStorageTrie
-const ipldEthTrie = require('ipld-ethereum').ethTxTrie
-const ipldEthTx = require('ipld-ethereum').ethTx
-const ipldGit = require('ipld-git')
-const ipldRaw = require('ipld-raw')
-const ipldZcash = require('ipld-zcash')
 const parsePath = require('./parse-ipld-path')
+
+const IpldFormats = {
+  get 'git-raw' () {
+    return require('ipld-git')
+  },
+  get 'bitcoin-block' () {
+    return require('ipld-bitcoin')
+  },
+  get 'eth-account-snapshot' () {
+    return require('ipld-ethereum').ethAccountSnapshot
+  },
+  get 'eth-block' () {
+    return require('ipld-ethereum').ethBlock
+  },
+  get 'eth-block-list' () {
+    return require('ipld-ethereum').ethBlockList
+  },
+  get 'eth-state-trie' () {
+    return require('ipld-ethereum').ethStateTrie
+  },
+  get 'eth-storage-trie' () {
+    return require('ipld-ethereum').ethStorageTrie
+  },
+  get 'eth-tx' () {
+    return require('ipld-ethereum').ethTx
+  },
+  get 'eth-tx-trie' () {
+    return require('ipld-ethereum').ethTxTrie
+  },
+  get 'zcash-block' () {
+    return require('ipld-zcash')
+  }
+}
 
 // A better IPLD™️
 class Ipld {
   constructor (bs) {
     this._ipld = new _Ipld({
       blockService: bs,
-      formats: [
-        ipldBitcoin, ipldDagCbor, ipldDagPb, ipldEthAccountSnapshot,
-        ipldEthBlock, ipldEthBlockList, ipldEthStateTrie, ipldEthStorageTrie,
-        ipldEthTrie, ipldEthTx, ipldGit, ipldRaw, ipldZcash
-      ]
+      loadFormat (codec, cb) {
+        debug('loading IPLD format', codec)
+        if (IpldFormats[codec]) return cb(null, IpldFormats[codec])
+        cb(new Error(`missing IPLD format "${codec}"`))
+      }
     })
     this._bs = bs
   }
