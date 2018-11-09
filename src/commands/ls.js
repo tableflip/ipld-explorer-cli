@@ -4,7 +4,7 @@ const isIpfs = require('is-ipfs')
 const CID = require('cids')
 const Formatters = require('../formatters')
 
-module.exports = async function ls ({ ipld, ipfs, wd, spinner }, path) {
+module.exports = async function ls ({ ipld, wd, spinner }, path) {
   path = path || wd
 
   if (isIpfs.cid(path)) {

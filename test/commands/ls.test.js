@@ -2,10 +2,14 @@ import test from 'ava'
 import Sinon from 'sinon'
 import { DAGNode } from 'ipld-dag-pb'
 import { promisify } from 'util'
+import CID from 'cids'
 import ls from '../../src/commands/ls'
 
 test.beforeEach(t => {
-  t.context.ipfs = { dag: { get: Sinon.stub() } }
+  t.context.ipld = {
+    get: Sinon.stub(),
+    resolve: Sinon.stub()
+  }
 })
 
 test('should ls links for protobuf DAG node', async t => {
@@ -21,11 +25,12 @@ test('should ls links for protobuf DAG node', async t => {
   }]
 
   const node = await promisify(DAGNode.create)(data, links)
-  const cid = node.toJSON().multihash
+  const cid = new CID(node.toJSON().multihash)
 
-  t.context.ipfs.dag.get.returns(Promise.resolve({ value: node }))
+  t.context.ipld.resolve.returns(Promise.resolve({ cid }))
+  t.context.ipld.get.returns(Promise.resolve(node))
 
-  const res = await ls({ ipfs: t.context.ipfs }, cid)
+  const res = await ls({ ipld: t.context.ipld }, cid)
 
   links.forEach(l => {
     t.true(res.out.includes(l.name))
@@ -46,11 +51,12 @@ test('should ls for working DAG when no argument is given', async t => {
   }]
 
   const node = await promisify(DAGNode.create)(data, links)
-  const cid = node.toJSON().multihash
+  const cid = new CID(node.toJSON().multihash)
 
-  t.context.ipfs.dag.get.returns(Promise.resolve({ value: node }))
+  t.context.ipld.resolve.returns(Promise.resolve({ cid }))
+  t.context.ipld.get.returns(Promise.resolve(node))
 
-  const res = await ls({ ipfs: t.context.ipfs, wd: `/ipfs/${cid}` })
+  const res = await ls({ ipld: t.context.ipld, wd: `/ipfs/${cid}` })
 
   links.forEach(l => {
     t.true(res.out.includes(l.name))

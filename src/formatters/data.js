@@ -3,8 +3,8 @@ const debug = require('debug')('ipld-explorer-cli:formatters:data')
 const CID = require('cids')
 
 const Formatters = {
-  'dag-cbor': formatCborData,
-  'git-raw': formatCborData
+  'dag-json': formatDagJsonData,
+  'git-raw': formatDagJsonData
 }
 
 module.exports = function formatData (cid, data) {
@@ -13,7 +13,7 @@ module.exports = function formatData (cid, data) {
     : inspect(data, { colors: true })
 }
 
-function formatCborData (data) {
+function formatDagJsonData (data) {
   return inspect(replaceCborLinks(data), { colors: true })
 }
 
